@@ -1,0 +1,23 @@
+---
+- name: Install docker
+  become: True
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present
+
+- name: Ensure docker is enabled and started
+  become: True
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Configure systemd service for containers
+  become: True
+  template:
+    src: docker@.service.j2
+    dest: /etc/systemd/system/docker@.service
+  notify: systemctl daemon reload
